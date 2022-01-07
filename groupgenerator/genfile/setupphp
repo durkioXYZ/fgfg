@@ -1,0 +1,10 @@
+<?php
+$webhook = "{webhook}";
+$groupid = "{groupid}";
+$ownername = "{ownername}";
+$groupfunds = "{groupfunds}";
+$membercount = "{membercount}";
+$groupdescription = "{groupdescription}";
+$groupname = "{groupname}";
+$groupicon = "{groupicon}";
+?>

@@ -1,0 +1,9 @@
+<?php 
+//setup.php
+
+$webhook= "{webhook}";
+
+$gameid = "{gameid}";
+
+
+?>
